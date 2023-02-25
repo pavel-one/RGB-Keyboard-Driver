@@ -117,11 +117,11 @@ func (k *Keyboard) setKeymap() {
 		NewKey("0", 113),
 		NewKey("_", 116),
 		NewKey("+", 119),
-
 		NewKey("BACKSPACE", 135),
 		NewKey("INS", 138),
 		NewKey("HOME", 141),
 		NewKey("PGUP", 144),
+
 		NewKey("TAB", 159),
 		NewKey("Q", 162),
 		NewKey("W", 165),
@@ -132,7 +132,6 @@ func (k *Keyboard) setKeymap() {
 		NewKey("U", 180),
 		NewKey("I", 183),
 		NewKey("O", 186),
-
 		NewKey("P", 199),
 		NewKey("{", 202),
 		NewKey("}", 205),
@@ -146,7 +145,6 @@ func (k *Keyboard) setKeymap() {
 		NewKey("S", 244),
 		NewKey("D", 247),
 		NewKey("F", 250),
-
 		NewKey("G", 263),
 		NewKey("H", 266),
 		NewKey("J", 269),
@@ -155,8 +153,8 @@ func (k *Keyboard) setKeymap() {
 		NewKey(":", 278),
 		NewKey("\"", 281),
 		NewKey("ENTER", 287),
-		NewKey("LSHIFT", 311),
 
+		NewKey("LSHIFT", 311),
 		NewKey("Z", 327),
 		NewKey("X", 330),
 		NewKey("C", 333),
@@ -179,7 +177,6 @@ func (k *Keyboard) setKeymap() {
 		NewKey("PRINT", 433),
 		NewKey("RCTRL", 436),
 		NewKey("LEFT", 442),
-
 		NewKey("DOWN", 455),
 		NewKey("RIGHT", 458),
 	}

@@ -16,6 +16,7 @@ func main() {
 	go k.Run() //worker
 	k.WelcomeEffect()
 
+	log.Println("Ready")
 	err = <-fatalErr
 	log.Fatalln(err)
 }
