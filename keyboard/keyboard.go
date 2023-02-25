@@ -2,6 +2,7 @@ package keyboard
 
 import (
 	"github.com/karalabe/hid"
+	"log"
 	"time"
 )
 
@@ -15,8 +16,8 @@ type Keyboard struct {
 }
 
 func NewKeyboard(ch chan<- error) (*Keyboard, error) {
-	vid := uint16(1046)  //TODO: Set vid
-	pid := uint16(49989) //TODO: set pid
+	vid := uint16(1046)  //TODO: Set vid ?
+	pid := uint16(49989) //TODO: set pid ?
 
 	keyboard := &Keyboard{
 		VendorID:  vid,
@@ -24,7 +25,7 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 		ErrorCh:   ch,
 	}
 
-	keyboard.RGBState = keyboard.getResetBytes() //set byte map
+	keyboard.RGBState = keyboard.getColorBytes() //set byte map
 
 	keyboard.setKeymap()
 
@@ -37,7 +38,45 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 		return nil, err
 	}
 
+	wi, err := keyboard.SetDriverMode()
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("Set mode write %d byte", wi)
+
 	return keyboard, nil
+}
+
+// SetDriverMode Send change mode keyboard
+func (k *Keyboard) SetDriverMode() (int, error) {
+	// MODES:
+	// 1 - simple color change with dark
+	// 2 - rainbow
+	// 3 - simple color change smooth
+	// 4 - circle
+	// 5 - wtf ?
+	// 6 - click color
+	// 7 - click line
+	// 8 - click feel
+	// 9 - random color
+	// 10 - static manual colors (driver mode)
+	// 11 - click plus
+	// 12 - equalizer
+	// 13 - equalizer 2 (?)
+	// 14 - auto diagonal feel
+	// 15 - auto lines feel
+	//16 - click circle
+
+	return k.Device.Write([]byte{
+		0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x04, //7 byte - mode (max 16), 8 - bright (max - 4)
+		0x01, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 9 - speed
+		0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 17 - byte type (rainbow or mono)
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	})
 }
 
 func (k *Keyboard) Run() {
@@ -182,7 +221,7 @@ func (k *Keyboard) setKeymap() {
 	}
 }
 
-func (k *Keyboard) getResetBytes() []byte {
+func (k *Keyboard) getColorBytes() []byte {
 	return []byte{
 		0x01, 0x0f, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

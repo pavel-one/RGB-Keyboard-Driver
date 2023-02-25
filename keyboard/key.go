@@ -1,5 +1,7 @@
 package keyboard
 
+import "github.com/lucasb-eyer/go-colorful"
+
 type Key struct {
 	Address []int
 	Name    string
@@ -19,10 +21,14 @@ func NewKey(name string, firstByte int) *Key {
 	}
 }
 
+func (k *Key) Fill(c *colorful.Color) {
+	k.Red = int(c.R)
+	k.Green = int(c.G)
+	k.Blue = int(c.B)
+}
+
 func (k *Key) Reset() {
-	k.Red = 0
-	k.Green = 0
-	k.Blue = 0
+	k.Fill(&colorful.Color{})
 }
 
 func (k *Key) GetRedIndex() int {

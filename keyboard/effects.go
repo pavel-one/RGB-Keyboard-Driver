@@ -13,11 +13,7 @@ func (k *Keyboard) WelcomeEffect() {
 		B: 255,
 	}
 
-	blackColor := colorful.Color{
-		R: 0,
-		G: 0,
-		B: 0,
-	}
+	blackColor := colorful.Color{}
 
 	c2 := c1.BlendRgb(blackColor, 0.50)
 	c3 := c1.BlendRgb(blackColor, 0.90)
@@ -25,35 +21,36 @@ func (k *Keyboard) WelcomeEffect() {
 	for index, key := range k.Keymap {
 		if index != 0 {
 			old := k.Keymap[index-1]
-			old.Red = int(c2.R)
-			old.Green = int(c2.G)
-			old.Blue = int(c2.B)
+			old.Fill(&c2)
 		}
 
 		if index >= 2 {
 			old := k.Keymap[index-2]
-			old.Red = int(c3.R)
-			old.Green = int(c3.G)
-			old.Blue = int(c3.B)
+			old.Fill(&c3)
 		}
 
 		if index >= 3 {
 			old := k.Keymap[index-3]
-			old.Red = 0
-			old.Green = 0
-			old.Blue = 0
+			old.Reset()
 		}
 
-		key.Red = int(c1.R)
-		key.Green = int(c1.G)
-		key.Blue = int(c1.B)
+		key.Fill(&c1)
 
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 80)
 	}
 
-	k.ResetState()
+	if err := k.ResetState(); err != nil {
+		k.ErrorCh <- err
+	}
 
-	k.PrintText("zov")
+	err := k.Fill(&colorful.Color{
+		R: 0,
+		G: 255,
+		B: 255,
+	})
+	if err != nil {
+		k.ErrorCh <- err
+	}
 }
 
 func (k *Keyboard) PrintText(word string) {
@@ -70,11 +67,9 @@ func (k *Keyboard) PrintText(word string) {
 
 }
 
-func (k *Keyboard) Fill(r int, g int, b int) error {
+func (k *Keyboard) Fill(color *colorful.Color) error {
 	for _, key := range k.Keymap {
-		key.Red = r
-		key.Green = g
-		key.Blue = b
+		key.Fill(color)
 	}
 
 	return nil
