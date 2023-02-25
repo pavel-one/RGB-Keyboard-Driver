@@ -3,19 +3,19 @@ package main
 import (
 	"KeyboardDriver/keyboard"
 	"log"
-	"time"
 )
 
 func main() {
-	k, err := keyboard.NewKeyboard()
+	fatalErr := make(chan error, 1)
+
+	k, err := keyboard.NewKeyboard(fatalErr)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	go k.Run()
-	time.Sleep(5 * time.Second)
-	k.Keymap[5].Red = 255
-	k.Keymap[5].Green = 255
+	go k.Run() //worker
+	k.WelcomeEffect()
 
-	time.Sleep(15 * time.Second)
+	err = <-fatalErr
+	log.Fatalln(err)
 }

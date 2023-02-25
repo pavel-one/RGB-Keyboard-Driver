@@ -48,7 +48,7 @@ func (k *Keyboard) WelcomeEffect() {
 		key.Green = int(c1.G)
 		key.Blue = int(c1.B)
 
-		time.Sleep(time.Millisecond * 20)
+		time.Sleep(time.Millisecond * 100)
 	}
 
 	k.ResetState()
