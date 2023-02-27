@@ -2,6 +2,7 @@ package main
 
 import (
 	"KeyboardDriver/keyboard"
+	"KeyboardDriver/ui"
 	"log"
 )
 
@@ -14,7 +15,9 @@ func main() {
 	}
 
 	go k.Run() //worker
-	k.WelcomeEffect()
+	go k.WelcomeEffect()
+
+	ui.NewUi(k)
 
 	log.Println("Ready")
 	err = <-fatalErr

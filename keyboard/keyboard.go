@@ -44,6 +44,8 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 	}
 	log.Printf("Set mode write %d byte", wi)
 
+	//time.Sleep(time.Second * 60)
+
 	return keyboard, nil
 }
 
@@ -61,15 +63,15 @@ func (k *Keyboard) SetDriverMode() (int, error) {
 	// 9 - random color
 	// 10 - static manual colors (driver mode)
 	// 11 - click plus
-	// 12 - equalizer
-	// 13 - equalizer 2 (?)
+	// 12 - equalizer clicked
+	// 13 - equalizer 2 (?) music
 	// 14 - auto diagonal feel
 	// 15 - auto lines feel
 	//16 - click circle
 
 	return k.Device.Write([]byte{
 		0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x04, //7 byte - mode (max 16), 8 - bright (max - 4)
-		0x01, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 9 - speed
+		0x03, 0xff, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, // 9 - speed, 13,14,15 - back color
 		0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 17 - byte type (rainbow or mono)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -110,7 +112,7 @@ func (k *Keyboard) ResetState() error {
 	return nil
 }
 
-func (k *Keyboard) Update() (int, error) {
+func (k *Keyboard) Write() (int, error) {
 	return k.Device.Write(k.RGBState)
 }
 
@@ -121,7 +123,7 @@ func (k *Keyboard) UpdateWithKeys() (int, error) {
 		k.RGBState[key.GetBlueIndex()] = key.GetBlue()
 	}
 
-	return k.Update()
+	return k.Write()
 }
 
 func (k *Keyboard) setKeymap() {
