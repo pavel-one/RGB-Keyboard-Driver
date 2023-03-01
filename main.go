@@ -17,7 +17,14 @@ func main() {
 	go k.Run() //worker
 	go k.WelcomeEffect()
 
-	ui.NewUi(k)
+	u, err := ui.NewUi(k, "Dark Project KD87a")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if err := u.Run(); err != nil {
+		log.Fatalln(err)
+	}
 
 	log.Println("Ready")
 	err = <-fatalErr
