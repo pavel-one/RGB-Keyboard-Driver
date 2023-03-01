@@ -4,6 +4,7 @@ import (
 	"KeyboardDriver/keyboard"
 	"KeyboardDriver/ui"
 	"log"
+	"os"
 )
 
 func main() {
@@ -19,15 +20,13 @@ func main() {
 	go k.WelcomeEffect() //run start effect
 
 	// construct UI
-	u, err := ui.CreateUi(k, "Dark Project KD87a")
+	u, err := ui.NewUI(k, "Dark Project KD87a")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Run UI
-	if err := u.Run(); err != nil {
-		log.Fatalln(err)
-	}
+	go u.Application.Run(os.Args)
 
 	log.Println("Ready")
 	err = <-fatalErr
