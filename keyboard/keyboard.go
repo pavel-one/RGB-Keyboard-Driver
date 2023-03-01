@@ -3,6 +3,7 @@ package keyboard
 import (
 	"github.com/karalabe/hid"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -13,6 +14,7 @@ type Keyboard struct {
 	RGBState  []byte
 	Keymap    []*Key
 	ErrorCh   chan<- error
+	Mu        sync.Mutex
 }
 
 func NewKeyboard(ch chan<- error) (*Keyboard, error) {
@@ -23,6 +25,7 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 		VendorID:  vid,
 		ProductID: pid,
 		ErrorCh:   ch,
+		Mu:        sync.Mutex{},
 	}
 
 	keyboard.RGBState = keyboard.getColorBytes() //set byte map
@@ -43,8 +46,6 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 		return nil, err
 	}
 	log.Printf("Set mode write %d byte", wi)
-
-	//time.Sleep(time.Second * 60)
 
 	return keyboard, nil
 }
@@ -81,6 +82,7 @@ func (k *Keyboard) SetDriverMode() (int, error) {
 	})
 }
 
+// Run update state every 10ms
 func (k *Keyboard) Run() {
 	for true {
 		_, err := k.UpdateWithKeys()
@@ -104,6 +106,7 @@ func (k *Keyboard) openDevice() error {
 	return nil
 }
 
+// ResetState Shutdown all keys
 func (k *Keyboard) ResetState() error {
 	for _, key := range k.Keymap {
 		key.Reset()
@@ -112,10 +115,14 @@ func (k *Keyboard) ResetState() error {
 	return nil
 }
 
-func (k *Keyboard) Write() (int, error) {
-	return k.Device.Write(k.RGBState)
+func (k *Keyboard) write() (int, error) {
+	k.Mu.Lock()
+	write, err := k.Device.Write(k.RGBState)
+	k.Mu.Unlock()
+	return write, err
 }
 
+// UpdateWithKeys Update state keys on keyboard
 func (k *Keyboard) UpdateWithKeys() (int, error) {
 	for _, key := range k.Keymap {
 		k.RGBState[key.GetRedIndex()] = key.GetRed()
@@ -123,7 +130,7 @@ func (k *Keyboard) UpdateWithKeys() (int, error) {
 		k.RGBState[key.GetBlueIndex()] = key.GetBlue()
 	}
 
-	return k.Write()
+	return k.write()
 }
 
 func (k *Keyboard) setKeymap() {
@@ -221,6 +228,133 @@ func (k *Keyboard) setKeymap() {
 		NewKey("DOWN", 455),
 		NewKey("RIGHT", 458),
 	}
+}
+
+// GetSliceKeymap Get button matrix
+func (k *Keyboard) GetSliceKeymap() [][]*Key {
+	keymap := make([][]*Key, 6)
+
+	keymap[0] = []*Key{
+		k.Keymap[0],
+		nil,
+		k.Keymap[1],
+		k.Keymap[2],
+		k.Keymap[3],
+		k.Keymap[4],
+		k.Keymap[5],
+		k.Keymap[6],
+		k.Keymap[7],
+		k.Keymap[8],
+		k.Keymap[9],
+		k.Keymap[10],
+		k.Keymap[11],
+		k.Keymap[12],
+		k.Keymap[13],
+		k.Keymap[14],
+		k.Keymap[15],
+	}
+
+	keymap[1] = []*Key{
+		k.Keymap[16],
+		k.Keymap[17],
+		k.Keymap[18],
+		k.Keymap[19],
+		k.Keymap[20],
+		k.Keymap[21],
+		k.Keymap[22],
+		k.Keymap[23],
+		k.Keymap[24],
+		k.Keymap[25],
+		k.Keymap[26],
+		k.Keymap[27],
+		k.Keymap[28],
+		k.Keymap[29],
+		k.Keymap[30],
+		k.Keymap[31],
+		k.Keymap[32],
+	}
+
+	keymap[2] = []*Key{
+		k.Keymap[33],
+		k.Keymap[34],
+		k.Keymap[35],
+		k.Keymap[36],
+		k.Keymap[37],
+		k.Keymap[38],
+		k.Keymap[39],
+		k.Keymap[40],
+		k.Keymap[41],
+		k.Keymap[42],
+		k.Keymap[43],
+		k.Keymap[44],
+		k.Keymap[45],
+		k.Keymap[46],
+		k.Keymap[47],
+		k.Keymap[48],
+		k.Keymap[49],
+	}
+
+	keymap[3] = []*Key{
+		k.Keymap[50],
+		k.Keymap[51],
+		k.Keymap[52],
+		k.Keymap[53],
+		k.Keymap[54],
+		k.Keymap[55],
+		k.Keymap[56],
+		k.Keymap[57],
+		k.Keymap[58],
+		k.Keymap[59],
+		k.Keymap[60],
+		k.Keymap[61],
+		k.Keymap[62],
+		nil,
+		nil,
+		nil,
+		nil,
+	}
+
+	keymap[4] = []*Key{
+		nil,
+		k.Keymap[63],
+		k.Keymap[64],
+		k.Keymap[65],
+		k.Keymap[66],
+		k.Keymap[67],
+		k.Keymap[68],
+		k.Keymap[69],
+		k.Keymap[70],
+		k.Keymap[71],
+		k.Keymap[72],
+		k.Keymap[73],
+		k.Keymap[74],
+		nil,
+		nil,
+		k.Keymap[75],
+		nil,
+	}
+
+	keymap[5] = []*Key{
+		k.Keymap[76],
+		k.Keymap[77],
+		nil,
+		nil,
+		nil,
+		k.Keymap[78],
+		nil,
+		nil,
+		nil,
+		k.Keymap[79],
+		k.Keymap[80],
+		k.Keymap[81],
+		k.Keymap[82],
+		k.Keymap[83],
+		k.Keymap[84],
+		k.Keymap[85],
+		k.Keymap[86],
+	}
+
+	return keymap
 }
 
 func (k *Keyboard) getColorBytes() []byte {

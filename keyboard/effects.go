@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// WelcomeEffect driver first run effect, check all diodes
 func (k *Keyboard) WelcomeEffect() {
 	c1 := colorful.Color{
 		R: 255,
@@ -36,20 +37,17 @@ func (k *Keyboard) WelcomeEffect() {
 
 		key.Fill(&c1)
 
-		time.Sleep(time.Millisecond * 80)
+		time.Sleep(time.Millisecond * 25)
 	}
 
 	if err := k.ResetState(); err != nil {
 		k.ErrorCh <- err
 	}
 
-	err := k.Fill(&colorful.Color{
-		R: 0,
-		G: 255,
-		B: 255,
-	})
+	err := k.Fill(RandomHappyColor())
 	if err != nil {
 		k.ErrorCh <- err
+		return
 	}
 }
 
@@ -67,9 +65,22 @@ func (k *Keyboard) PrintText(word string) {
 
 }
 
+// Fill set color full keyboard
 func (k *Keyboard) Fill(color *colorful.Color) error {
-	for _, key := range k.Keymap {
-		key.Fill(color)
+	keymap := k.GetSliceKeymap()
+
+	for _, row := range keymap {
+		row := row
+		// fill rows parallels
+		go func() {
+			for _, key := range row {
+				if key == nil {
+					FakeButton()
+					continue
+				}
+				key.FillSmooth(color)
+			}
+		}()
 	}
 
 	return nil
