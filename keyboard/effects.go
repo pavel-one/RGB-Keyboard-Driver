@@ -67,7 +67,7 @@ func (k *Keyboard) PrintText(word string) {
 
 // Fill set color full keyboard
 func (k *Keyboard) Fill(color *colorful.Color) error {
-	keymap := k.GetSliceKeymap()
+	keymap := k.KeymapMatrix
 
 	for _, row := range keymap {
 		row := row

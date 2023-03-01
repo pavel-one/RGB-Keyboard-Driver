@@ -8,13 +8,14 @@ import (
 )
 
 type Keyboard struct {
-	VendorID  uint16
-	ProductID uint16
-	Device    *hid.Device
-	RGBState  []byte
-	Keymap    []*Key
-	ErrorCh   chan<- error
-	Mu        sync.Mutex
+	VendorID     uint16
+	ProductID    uint16
+	Device       *hid.Device
+	RGBState     []byte
+	Keymap       []*Key
+	KeymapMatrix [][]*Key
+	ErrorCh      chan<- error
+	Mu           sync.Mutex
 }
 
 func NewKeyboard(ch chan<- error) (*Keyboard, error) {
@@ -31,6 +32,7 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 	keyboard.RGBState = keyboard.getColorBytes() //set byte map
 
 	keyboard.setKeymap()
+	keyboard.setMatrix()
 
 	// open
 	if err := keyboard.openDevice(); err != nil {
@@ -230,8 +232,12 @@ func (k *Keyboard) setKeymap() {
 	}
 }
 
+func (k *Keyboard) setMatrix() {
+	k.KeymapMatrix = k.getSliceKeymap()
+}
+
 // GetSliceKeymap Get button matrix
-func (k *Keyboard) GetSliceKeymap() [][]*Key {
+func (k *Keyboard) getSliceKeymap() [][]*Key {
 	keymap := make([][]*Key, 6)
 
 	keymap[0] = []*Key{
@@ -307,15 +313,14 @@ func (k *Keyboard) GetSliceKeymap() [][]*Key {
 		k.Keymap[59],
 		k.Keymap[60],
 		k.Keymap[61],
-		k.Keymap[62],
 		nil,
+		k.Keymap[62],
 		nil,
 		nil,
 		nil,
 	}
 
 	keymap[4] = []*Key{
-		nil,
 		k.Keymap[63],
 		k.Keymap[64],
 		k.Keymap[65],
@@ -327,8 +332,9 @@ func (k *Keyboard) GetSliceKeymap() [][]*Key {
 		k.Keymap[71],
 		k.Keymap[72],
 		k.Keymap[73],
-		k.Keymap[74],
 		nil,
+		nil,
+		k.Keymap[74],
 		nil,
 		k.Keymap[75],
 		nil,
@@ -337,14 +343,14 @@ func (k *Keyboard) GetSliceKeymap() [][]*Key {
 	keymap[5] = []*Key{
 		k.Keymap[76],
 		k.Keymap[77],
-		nil,
-		nil,
-		nil,
 		k.Keymap[78],
 		nil,
 		nil,
 		nil,
 		k.Keymap[79],
+		nil,
+		nil,
+		nil,
 		k.Keymap[80],
 		k.Keymap[81],
 		k.Keymap[82],

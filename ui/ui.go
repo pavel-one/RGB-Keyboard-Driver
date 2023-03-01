@@ -43,17 +43,17 @@ func (u *UI) constructUi(app *gtk.Application, name string) error {
 	window.SetTitle(name)
 	window.SetDefaultSize(800, 600)
 
-	grid, err := createGrid()
+	grid, err := u.createGrid()
 	if err != nil {
 		return err
 	}
 
-	sidebar, err := createSidebar()
+	sidebar, err := u.createSidebar()
 	if err != nil {
 		return err
 	}
 
-	right, err := createRightBox()
+	right, err := u.createRightBox()
 	if err != nil {
 		return err
 	}
