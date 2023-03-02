@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RUN" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="RGB-Keyboard-Driver" />
+    <working_directory value="$PROJECT_DIR$" />
+    <envs>
+      <env name="CGO_CFLAGS" value="-Wno-deprecated-declarations" />
+    </envs>
+    <sudo value="true" />
+    <kind value="PACKAGE" />
+    <package value="KeyboardDriver" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/main.go" />
+    <output_directory value="$PROJECT_DIR$" />
+    <method v="2" />
+  </configuration>
+</component>

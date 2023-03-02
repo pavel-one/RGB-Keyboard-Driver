@@ -19,8 +19,10 @@ type Keyboard struct {
 }
 
 func NewKeyboard(ch chan<- error) (*Keyboard, error) {
-	vid := uint16(1046)  //TODO: Set vid ?
-	pid := uint16(49989) //TODO: set pid ?
+	vid, pid, err := FindKeyboard()
+	if err != nil {
+		return nil, err
+	}
 
 	keyboard := &Keyboard{
 		VendorID:  vid,
