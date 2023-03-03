@@ -6,11 +6,11 @@ import (
 )
 
 type Key struct {
-	Address []int
-	Name    string
-	Red     int
-	Green   int
-	Blue    int
+	Address []int  `json:"address"`
+	Name    string `json:"name"`
+	Red     int    `json:"red"`
+	Green   int    `json:"green"`
+	Blue    int    `json:"blue"`
 }
 
 func NewKey(name string, firstByte int) *Key {

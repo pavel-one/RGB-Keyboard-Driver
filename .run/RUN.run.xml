@@ -3,22 +3,11 @@
     <module name="KeyboardDriver" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-tags dev -gcflags &quot;all=-N -l&quot;" />
-    <sudo value="true" />
     <kind value="PACKAGE" />
     <package value="KeyboardDriver" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/main.go" />
     <output_directory value="$PROJECT_DIR$" />
-    <method v="2">
-      <option name="NpmBeforeRunTask" enabled="true">
-        <package-json value="$PROJECT_DIR$/frontend/package.json" />
-        <command value="run" />
-        <scripts>
-          <script value="build" />
-        </scripts>
-        <node-interpreter value="project" />
-        <envs />
-      </option>
-    </method>
+    <method v="2" />
   </configuration>
 </component>

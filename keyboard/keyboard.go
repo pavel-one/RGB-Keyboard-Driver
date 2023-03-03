@@ -438,3 +438,10 @@ func (k *Keyboard) getColorBytes() []byte {
 		0x00, 0x00, 0x00, 0x00,
 	}
 }
+
+func (k *Keyboard) Close() {
+	if err := k.Device.Close(); err != nil {
+		k.ErrorCh <- err
+		return
+	}
+}

@@ -2,6 +2,8 @@ wails.dev:
 	sudo wails dev
 build:
 	wails build
+generate:
+	sudo wails generate module
 
 build.frontend:
 	cd frontend && npm install && npm run build

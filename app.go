@@ -3,7 +3,6 @@ package main
 import (
 	"KeyboardDriver/keyboard"
 	"context"
-	"fmt"
 	"log"
 )
 
@@ -24,7 +23,6 @@ func NewApp(k *keyboard.Keyboard, ch chan<- error) *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	// Perform your setup here
 	a.ctx = ctx
 }
 
@@ -34,19 +32,20 @@ func (a *App) domReady(ctx context.Context) {
 	log.Println("Ready")
 }
 
-// beforeClose is called when the application is about to quit,
-// either by clicking the window close button or calling runtime.Quit.
-// Returning true will cause the application to continue, false will continue shutdown as normal.
-func (a *App) beforeClose(ctx context.Context) (prevent bool) {
-	return false
-}
-
-// shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
-	// Perform your teardown here
+	log.Println("shutdown!!!")
+	a.Keyboard.Close()
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+func (a *App) GetKeyboardKeys() []*keyboard.Key {
+	return a.Keyboard.Keymap
+}
+
+func (a *App) GetKeyboardMatrix() [][]*keyboard.Key {
+	return a.Keyboard.KeymapMatrix
+}
+
+func (a *App) Reload() {
+	go a.Keyboard.WelcomeEffect()
+
 }
