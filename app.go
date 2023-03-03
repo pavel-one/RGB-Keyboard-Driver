@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 )
 
 // App struct
@@ -31,7 +30,6 @@ func (a *App) startup(ctx context.Context) {
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	time.Sleep(time.Second * 5)
 	go a.Keyboard.WelcomeEffect()
 	log.Println("Ready")
 }
