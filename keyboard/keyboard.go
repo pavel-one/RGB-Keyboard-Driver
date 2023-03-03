@@ -18,10 +18,11 @@ type Keyboard struct {
 	Mu           sync.Mutex
 }
 
-func NewKeyboard(ch chan<- error) (*Keyboard, error) {
+func NewKeyboard(ch chan<- error) *Keyboard {
 	vid, pid, err := FindKeyboard()
 	if err != nil {
-		return nil, err
+		ch <- err
+		return nil
 	}
 
 	keyboard := &Keyboard{
@@ -38,20 +39,23 @@ func NewKeyboard(ch chan<- error) (*Keyboard, error) {
 
 	// open
 	if err := keyboard.openDevice(); err != nil {
-		return nil, err
+		ch <- err
+		return nil
 	}
 
 	if err := keyboard.ResetState(); err != nil {
-		return nil, err
+		ch <- err
+		return nil
 	}
 
 	wi, err := keyboard.SetDriverMode()
 	if err != nil {
-		return nil, err
+		ch <- err
+		return nil
 	}
 	log.Printf("Set mode write %d byte", wi)
 
-	return keyboard, nil
+	return keyboard
 }
 
 // SetDriverMode Send change mode keyboard
