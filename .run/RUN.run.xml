@@ -2,9 +2,7 @@
   <configuration default="false" name="RUN" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="KeyboardDriver" />
     <working_directory value="$PROJECT_DIR$" />
-    <envs>
-      <env name="CGO_CFLAGS" value="-Wno-deprecated-declarations" />
-    </envs>
+    <go_parameters value="-tags dev -gcflags &quot;all=-N -l&quot;" />
     <sudo value="true" />
     <kind value="PACKAGE" />
     <package value="KeyboardDriver" />

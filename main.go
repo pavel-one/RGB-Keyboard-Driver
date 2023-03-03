@@ -10,6 +10,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"log"
+	"time"
 )
 
 //go:embed frontend/dist
@@ -91,4 +92,6 @@ func main() {
 			},
 		},
 	})
+
+	time.Sleep(time.Second * 5)
 }
