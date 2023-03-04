@@ -3,6 +3,7 @@ import Keyboard from "./components/Keyboard.vue";
 import {darkTheme} from 'naive-ui'
 import {reactive} from "vue";
 import ThemeSwitcher from "./components/ThemeSwitcher.vue";
+import RandomButton from "./components/RandomButton.vue";
 
 let data = reactive({
   theme: darkTheme as any,
@@ -25,6 +26,7 @@ function changeTheme(dark: boolean) {
 <template>
   <n-config-provider :style="{background: data.background, position: 'relative'}" :theme="data.theme">
     <theme-switcher @change="changeTheme"></theme-switcher>
+    <random-button></random-button>
     <keyboard></keyboard>
 
   </n-config-provider>

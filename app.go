@@ -14,7 +14,9 @@ type App struct {
 }
 
 // NewApp creates a new App application struct
-func NewApp(k *keyboard.Keyboard, ch chan<- error) *App {
+func NewApp(ch chan<- error) *App {
+	k := keyboard.NewKeyboard(ch)
+
 	return &App{
 		Keyboard: k,
 		FatalCh:  ch,
@@ -24,6 +26,19 @@ func NewApp(k *keyboard.Keyboard, ch chan<- error) *App {
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+
+	log.Println("startup")
+
+	if err := a.Keyboard.OpenDevice(); err != nil {
+		return
+	}
+
+	_, err := a.Keyboard.SetDriverMode()
+	if err != nil {
+		return
+	}
+
+	go a.Keyboard.Run()
 }
 
 // domReady is called after front-end resources have been loaded
@@ -47,5 +62,4 @@ func (a *App) GetKeyboardMatrix() [][]*keyboard.Key {
 
 func (a *App) Reload() {
 	go a.Keyboard.WelcomeEffect()
-
 }

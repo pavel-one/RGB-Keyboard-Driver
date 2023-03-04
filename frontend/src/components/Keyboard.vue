@@ -12,7 +12,7 @@ setInterval(() => {
   GetKeyboardMatrix().then(result => {
     data.keys = result
   })
-}, 1000)
+}, 500)
 </script>
 
 <template>

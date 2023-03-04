@@ -1,13 +1,11 @@
 package main
 
 import (
-	"KeyboardDriver/keyboard"
 	"embed"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"log"
-	"time"
 )
 
 //go:embed frontend/dist
@@ -24,12 +22,7 @@ func main() {
 		log.Fatalln(<-fatalErr)
 	}()
 
-	// construct keyboard
-	k := keyboard.NewKeyboard(fatalErr)
-	time.Sleep(time.Millisecond * 500)
-	go k.Run() //keyboard worker
-
-	app := NewApp(k, fatalErr)
+	app := NewApp(fatalErr)
 
 	err := wails.Run(&options.App{
 		Title:  ProjectName,

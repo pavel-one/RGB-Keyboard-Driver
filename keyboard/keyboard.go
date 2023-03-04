@@ -1,8 +1,8 @@
 package keyboard
 
 import (
+	"errors"
 	"github.com/karalabe/hid"
-	"log"
 	"sync"
 	"time"
 )
@@ -16,18 +16,19 @@ type Keyboard struct {
 	KeymapMatrix [][]*Key
 	ErrorCh      chan<- error
 	Mu           sync.Mutex
+	Connected    bool
 }
 
 func NewKeyboard(ch chan<- error) *Keyboard {
-	vid, pid, err := FindKeyboard()
-	if err != nil {
-		ch <- err
-		return nil
-	}
+	//vid, pid, err := FindKeyboard()
+	//if err != nil {
+	//	ch <- err
+	//	return nil
+	//}
 
 	keyboard := &Keyboard{
-		VendorID:  vid,
-		ProductID: pid,
+		VendorID:  uint16(1046),
+		ProductID: uint16(49989),
 		ErrorCh:   ch,
 		Mu:        sync.Mutex{},
 	}
@@ -38,22 +39,21 @@ func NewKeyboard(ch chan<- error) *Keyboard {
 	keyboard.setMatrix()
 
 	// open
-	if err := keyboard.openDevice(); err != nil {
-		ch <- err
-		return nil
-	}
+	//if err := keyboard.OpenDevice(); err != nil {
+	//	ch <- err
+	//	return nil
+	//}
+
+	//wi, err := keyboard.SetDriverMode()
+	//if err != nil {
+	//	ch <- err
+	//	return nil
+	//}
 
 	if err := keyboard.ResetState(); err != nil {
 		ch <- err
 		return nil
 	}
-
-	wi, err := keyboard.SetDriverMode()
-	if err != nil {
-		ch <- err
-		return nil
-	}
-	log.Printf("Set mode write %d byte", wi)
 
 	return keyboard
 }
@@ -78,6 +78,10 @@ func (k *Keyboard) SetDriverMode() (int, error) {
 	// 15 - auto lines feel
 	//16 - click circle
 
+	if !k.Connected {
+		return 0, errors.New("device not connectd")
+	}
+
 	return k.Device.Write([]byte{
 		0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x04, //7 byte - mode (max 16), 8 - bright (max - 4)
 		0x03, 0xff, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, // 9 - speed, 13,14,15 - back color
@@ -93,8 +97,12 @@ func (k *Keyboard) SetDriverMode() (int, error) {
 // Run update state every 10ms
 func (k *Keyboard) Run() {
 	for true {
-		_, err := k.UpdateWithKeys()
-		if err != nil {
+		if !k.Connected {
+			time.Sleep(time.Second * 5)
+			continue
+		}
+
+		if _, err := k.UpdateWithKeys(); err != nil {
 			k.ErrorCh <- err
 			return
 		}
@@ -103,7 +111,7 @@ func (k *Keyboard) Run() {
 	}
 }
 
-func (k *Keyboard) openDevice() error {
+func (k *Keyboard) OpenDevice() error {
 	devices := hid.Enumerate(k.VendorID, k.ProductID)
 	d, err := devices[2].Open()
 	if err != nil {
@@ -111,6 +119,7 @@ func (k *Keyboard) openDevice() error {
 	}
 	k.Device = d
 
+	k.Connected = true
 	return nil
 }
 
@@ -124,6 +133,10 @@ func (k *Keyboard) ResetState() error {
 }
 
 func (k *Keyboard) write() (int, error) {
+	if k.Device == nil {
+		return 0, nil
+	}
+
 	k.Mu.Lock()
 	write, err := k.Device.Write(k.RGBState)
 	k.Mu.Unlock()
@@ -444,4 +457,6 @@ func (k *Keyboard) Close() {
 		k.ErrorCh <- err
 		return
 	}
+
+	k.Connected = false
 }
