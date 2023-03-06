@@ -25,10 +25,29 @@ function changeTheme(dark: boolean) {
 
 <template>
   <n-config-provider :style="{background: data.background, position: 'relative'}" :theme="data.theme">
+    <n-layout>
+      <n-layout-header>Dark Project KD87a</n-layout-header>
+      <n-layout has-sider>
+        <n-layout-sider content-style="padding: 24px;">
+          <n-button>Test</n-button>
+        </n-layout-sider>
+        <n-layout-content content-style="padding: 24px;">
+          <keyboard></keyboard>
+        </n-layout-content>
+      </n-layout>
+      <n-layout-footer>footer</n-layout-footer>
+    </n-layout>
+
     <theme-switcher @change="changeTheme"></theme-switcher>
     <random-button></random-button>
-    <keyboard></keyboard>
+
 
   </n-config-provider>
 </template>
+
+<style lang="scss">
+.n-layout {
+  height: 100%;
+}
+</style>
 

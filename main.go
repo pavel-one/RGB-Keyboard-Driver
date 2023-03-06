@@ -31,6 +31,10 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
+		MaxWidth:         1920,
+		MaxHeight:        1024,
+		MinWidth:         1024,
+		MinHeight:        768,
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 255},
 		OnStartup:        app.startup,
 		OnDomReady:       app.domReady,
