@@ -113,6 +113,9 @@ func (k *Keyboard) Run() {
 
 func (k *Keyboard) OpenDevice() error {
 	devices := hid.Enumerate(k.VendorID, k.ProductID)
+	if len(devices) == 0 {
+		return errors.New("not found devices")
+	}
 	d, err := devices[2].Open()
 	if err != nil {
 		return err
