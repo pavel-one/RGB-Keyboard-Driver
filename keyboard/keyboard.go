@@ -3,6 +3,7 @@ package keyboard
 import (
 	"errors"
 	"github.com/karalabe/hid"
+	"log"
 	"sync"
 	"time"
 )
@@ -136,13 +137,22 @@ func (k *Keyboard) ResetState() error {
 }
 
 func (k *Keyboard) write() (int, error) {
+	k.Mu.Lock()
+	defer func() {
+		k.Mu.Unlock()
+	}()
+
 	if k.Device == nil {
 		return 0, nil
 	}
 
-	k.Mu.Lock()
 	write, err := k.Device.Write(k.RGBState)
-	k.Mu.Unlock()
+	if err != nil {
+		k.Connected = false
+		k.Device = nil
+		log.Println(err)
+		return 0, nil
+	}
 	return write, err
 }
 

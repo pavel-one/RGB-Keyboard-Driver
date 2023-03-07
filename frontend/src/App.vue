@@ -33,7 +33,7 @@ function updateStatus() {
 updateStatus()
 setInterval(() => {
   updateStatus()
-}, 5000)
+}, 2000)
 
 </script>
 
