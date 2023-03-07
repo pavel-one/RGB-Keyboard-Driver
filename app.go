@@ -3,6 +3,7 @@ package main
 import (
 	"KeyboardDriver/keyboard"
 	"context"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"log"
 )
 
@@ -44,11 +45,11 @@ func (a *App) startup(ctx context.Context) {
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
 	go a.Keyboard.WelcomeEffect()
-	log.Println("Ready")
+	runtime.LogInfo(a.ctx, "Ready")
 }
 
 func (a *App) shutdown(ctx context.Context) {
-	log.Println("shutdown!!!")
+	runtime.LogInfo(a.ctx, "Shutdown")
 	a.Keyboard.Close()
 }
 
@@ -62,4 +63,15 @@ func (a *App) GetKeyboardMatrix() [][]*keyboard.Key {
 
 func (a *App) Reload() {
 	go a.Keyboard.WelcomeEffect()
+}
+
+func (a *App) GetConnectedStatus() bool {
+	if !a.Keyboard.Connected {
+		if err := a.Keyboard.OpenDevice(); err != nil {
+			runtime.LogErrorf(a.ctx, "Error open device: %s", err)
+			return false
+		}
+	}
+
+	return a.Keyboard.Connected
 }

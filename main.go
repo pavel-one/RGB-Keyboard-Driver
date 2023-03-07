@@ -6,6 +6,9 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"log"
+	"os"
+	"os/exec"
+	"os/user"
 )
 
 //go:embed frontend/dist
@@ -16,7 +19,47 @@ var icon []byte
 
 const ProjectName = "Dark Project KD87a"
 
+var isRoot bool = false
+
+func checkUdev() {
+	defer func() {
+		if !isRoot {
+			return
+		}
+
+		exec.Command("udevadm", "control", "--reload-rules")
+		exec.Command("udevadm", "trigger")
+		os.Exit(1)
+	}()
+
+	u, err := user.Current()
+	if err != nil {
+		log.Fatalln("Not get current user")
+	}
+
+	if u.Uid != "0" {
+		isRoot = false
+		return
+	}
+
+	isRoot = true
+
+	if _, err := os.ReadFile("/etc/udev/rules.d/21-kd87-keyboard.rules"); err == nil { //if file exists, exit
+		log.Println("File existing, run from user")
+		return
+	}
+
+	str := []byte("SUBSYSTEM==\"usb\", ATTR{idVendor}==\"0416\", ATTR{idProduct}==\"c345\", TAG+=\"uaccess\"")
+	if err := os.WriteFile("/etc/udev/rules.d/21-kd87-keyboard.rules", str, 0644); err != nil {
+		return
+	}
+
+	return
+}
+
 func main() {
+	checkUdev()
+
 	fatalErr := make(chan error, 1)
 	go func() {
 		log.Fatalln(<-fatalErr)

@@ -1,11 +1,7 @@
 ## Non-Sudo
 
-
-Create group
+Create file `21-gaming-keyboard.rules` in `/etc/udev/rules.d`  
+Update rules: `sudo udevadm control --reload-rules && sudo udevadm trigger`
 ```shell
-sudo groupadd plugdev
-```
-Create file `0-usb-main.rules` in `/etc/udev/rules.d`
-```shell
-SUBSYSTEM=="usb", ATTR{idVendor}=="0416", ATTR{idProduct}=="c345", GROUP="plugdev", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0416", ATTR{idProduct}=="c345", TAG+="uaccess"
 ```
