@@ -50,7 +50,9 @@ func (a *App) domReady(ctx context.Context) {
 
 func (a *App) shutdown(ctx context.Context) {
 	runtime.LogInfo(a.ctx, "Shutdown")
-	a.Keyboard.Close()
+	if a.Keyboard.Connected {
+		a.Keyboard.Close()
+	}
 }
 
 func (a *App) GetKeyboardKeys() []*keyboard.Key {
