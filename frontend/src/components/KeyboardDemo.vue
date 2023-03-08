@@ -17,6 +17,22 @@ reactive({
 <template>
 <!--  thanks https://codepen.io/irajsuhail/pen/mYMZVm-->
   <div class="keyboard-base">
+    <div class="key">Esc</div>
+    <div class="key f1">F1</div>
+    <div class="key">F2</div>
+    <div class="key">F3</div>
+    <div class="key">F4</div>
+    <div class="key f5">F5</div>
+    <div class="key">F6</div>
+    <div class="key">F7</div>
+    <div class="key">F8</div>
+    <div class="key f9">F9</div>
+    <div class="key">F10</div>
+    <div class="key">F11</div>
+    <div class="key">F12</div>
+    <div class="key print">Print</div>
+    <div class="key">Scroll</div>
+    <div class="key">Pause</div>
     <div class="key">~</div>
     <div class="key">1</div>
     <div class="key">2</div>
@@ -31,6 +47,9 @@ reactive({
     <div class="key">-</div>
     <div class="key">+</div>
     <div class="key delete">Delete</div>
+    <div class="key ins">Ins</div>
+    <div class="key">Home</div>
+    <div class="key">PgUp</div>
     <div class="key tab">Tab</div>
     <div class="key">Q</div>
     <div class="key">w</div>
@@ -45,6 +64,9 @@ reactive({
     <div class="key">[</div>
     <div class="key">]</div>
     <div class="key backslash">\</div>
+    <div class="key del">Del</div>
+    <div class="key">End</div>
+    <div class="key">PgUp</div>
     <div class="key capslock">CapsLock</div>
     <div class="key">A</div>
     <div class="key">S</div>
@@ -57,7 +79,7 @@ reactive({
     <div class="key">L</div>
     <div class="key">;</div>
     <div class="key">'</div>
-    <div class="key return">Return</div>
+    <div class="key return">Enter</div>
     <div class="key leftshift">Shift</div>
     <div class="key">Z</div>
     <div class="key">X</div>
@@ -84,15 +106,12 @@ reactive({
 <style lang="scss">
 
 .keyboard-base {
-  max-width: 1085px;
+  min-width: 700px;
+  max-width: 100%;
   padding: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   border-radius: 10px;
   display: grid;
-  grid-template-columns: repeat(30, 30px);
+  grid-template-columns: repeat(38, 22px);
   grid-template-rows: repeat(5, 60px);
   grid-gap: 5px;
 }
@@ -102,18 +121,30 @@ reactive({
   border: 2px solid black;
   border-radius: 5px;
   grid-column: span 2;
-  font-size: 10px;
+  font-size: 1em;
   text-align: center;
   padding-top: 17px;
 }
 
 .key:hover {
   border: 1px solid #eeeeee;
-
 }
 
 .delete {
   grid-column: span 4;
+}
+
+.f1 {
+  grid-column: 5 / 7;
+}
+.f5 {
+  grid-column: 14 / 16;
+}
+.f9 {
+  grid-column: 23 / 25;
+}
+.print, .ins, .del {
+  grid-column: 32 / 34;
 }
 
 .tab {
