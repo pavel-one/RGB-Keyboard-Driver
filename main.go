@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -67,7 +66,7 @@ func main() {
 		log.Fatalln(<-fatalErr)
 	}()
 
-	app := NewApp(fatalErr, context.Background())
+	app := NewApp(fatalErr)
 
 	err := wails.Run(&options.App{
 		Title:  ProjectName,

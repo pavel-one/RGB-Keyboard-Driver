@@ -16,11 +16,10 @@ type App struct {
 }
 
 // NewApp creates a new App application struct
-func NewApp(ch chan<- error, ctx context.Context) *App {
+func NewApp(ch chan<- error) *App {
 	k := keyboard.NewKeyboard(ch)
 
 	return &App{
-		ctx:      ctx,
 		Keyboard: k,
 		FatalCh:  ch,
 	}
@@ -28,7 +27,7 @@ func NewApp(ch chan<- error, ctx context.Context) *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	//a.ctx = ctx
+	a.ctx = ctx
 
 	log.Println("startup")
 
