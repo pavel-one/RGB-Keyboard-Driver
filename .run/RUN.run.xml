@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="RUN" type="GoApplicationRunConfiguration" factoryName="Go Application">
-    <module name="KeyboardDriver" />
+    <module name="RGB-Keyboard-Driver" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-tags dev -gcflags &quot;all=-N -l&quot;" />
     <sudo value="true" />

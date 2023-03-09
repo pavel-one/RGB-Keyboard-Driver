@@ -5,6 +5,7 @@ import (
 	"context"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"log"
+	"time"
 )
 
 // App struct
@@ -15,10 +16,11 @@ type App struct {
 }
 
 // NewApp creates a new App application struct
-func NewApp(ch chan<- error) *App {
+func NewApp(ch chan<- error, ctx context.Context) *App {
 	k := keyboard.NewKeyboard(ch)
 
 	return &App{
+		ctx:      ctx,
 		Keyboard: k,
 		FatalCh:  ch,
 	}
@@ -26,7 +28,7 @@ func NewApp(ch chan<- error) *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
+	//a.ctx = ctx
 
 	log.Println("startup")
 
@@ -45,6 +47,14 @@ func (a *App) startup(ctx context.Context) {
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
 	go a.Keyboard.WelcomeEffect()
+
+	go func() {
+		for true {
+			time.Sleep(time.Second * 5)
+			a.Keyboard.WelcomeEffect()
+		}
+	}()
+
 	runtime.LogInfo(a.ctx, "Ready")
 }
 

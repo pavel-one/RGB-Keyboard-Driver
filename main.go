@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -29,6 +30,7 @@ func checkUdev() {
 
 		exec.Command("udevadm", "control", "--reload-rules")
 		exec.Command("udevadm", "trigger")
+		log.Println("Turn off and on keyboard")
 		os.Exit(1)
 	}()
 
@@ -65,7 +67,7 @@ func main() {
 		log.Fatalln(<-fatalErr)
 	}()
 
-	app := NewApp(fatalErr)
+	app := NewApp(fatalErr, context.Background())
 
 	err := wails.Run(&options.App{
 		Title:  ProjectName,

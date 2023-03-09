@@ -2,13 +2,19 @@
 import {keyboard} from "../../wailsjs/go/models";
 
 const props = defineProps<{
-  kKey: keyboard.Key
+  k: keyboard.Key
 }>()
 </script>
 
 <template>
-  <n-button :style="{width: '82px', background: 'rgb('+kKey.red.toString()+','+kKey.green.toString()+','+kKey.blue.toString()+')'}">
-    {{ kKey.name }}
-  </n-button>
+  <div @click="$emit('click')" :style="{background: 'rgb('+k.red+', '+k.green+', '+k.blue+')'}" class="key" :class="k.name.toLowerCase()">
+    {{ k.name }}
+  </div>
 </template>
+
+<style lang="scss">
+.key {
+  cursor: pointer;
+}
+</style>
 
