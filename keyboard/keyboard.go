@@ -1,6 +1,7 @@
 package keyboard
 
 import (
+	"KeyboardDriver/keyboard/options"
 	"errors"
 	"github.com/karalabe/hid"
 	"log"
@@ -18,6 +19,7 @@ type Keyboard struct {
 	ErrorCh      chan<- error
 	Mu           sync.Mutex
 	Connected    bool
+	Options      *options.Options
 }
 
 func NewKeyboard(ch chan<- error) *Keyboard {
@@ -32,6 +34,7 @@ func NewKeyboard(ch chan<- error) *Keyboard {
 		ProductID: uint16(49989),
 		ErrorCh:   ch,
 		Mu:        sync.Mutex{},
+		Options:   options.NewOptionsDefault(),
 	}
 
 	keyboard.RGBState = keyboard.getColorBytes() //set byte map

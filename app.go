@@ -5,7 +5,6 @@ import (
 	"context"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"log"
-	"time"
 )
 
 // App struct
@@ -41,19 +40,19 @@ func (a *App) startup(ctx context.Context) {
 	}
 
 	go a.Keyboard.Run()
+
+	go a.Keyboard.WelcomeEffect()
+
+	//go func() {
+	//	for true {
+	//		time.Sleep(time.Second * 5)
+	//		a.Keyboard.WelcomeEffect()
+	//	}
+	//}()
 }
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	go a.Keyboard.WelcomeEffect()
-
-	go func() {
-		for true {
-			time.Sleep(time.Second * 5)
-			a.Keyboard.WelcomeEffect()
-		}
-	}()
-
 	runtime.LogInfo(a.ctx, "Ready")
 }
 
