@@ -2,7 +2,7 @@ package options
 
 import "errors"
 
-const DefaultModeId = 1
+const DefaultModeId = 10
 
 var modes = []*Mode{
 	&Mode{

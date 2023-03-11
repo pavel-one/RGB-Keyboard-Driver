@@ -19,3 +19,7 @@ func SetBrightness(options *Options, brightness int) SetBrightnessError {
 	options.Brightness = uint16(brightness)
 	return nil
 }
+
+func SetBrightnessDefault(options *Options) {
+	options.Brightness = uint16(BrightnessHigh)
+}

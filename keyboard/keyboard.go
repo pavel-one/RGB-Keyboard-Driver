@@ -42,18 +42,6 @@ func NewKeyboard(ch chan<- error) *Keyboard {
 	keyboard.setKeymap()
 	keyboard.setMatrix()
 
-	// open
-	//if err := keyboard.OpenDevice(); err != nil {
-	//	ch <- err
-	//	return nil
-	//}
-
-	//wi, err := keyboard.SetDriverMode()
-	//if err != nil {
-	//	ch <- err
-	//	return nil
-	//}
-
 	if err := keyboard.ResetState(); err != nil {
 		ch <- err
 		return nil
@@ -62,40 +50,10 @@ func NewKeyboard(ch chan<- error) *Keyboard {
 	return keyboard
 }
 
-// SetDriverMode Send change mode keyboard
-func (k *Keyboard) SetDriverMode() (int, error) {
-	// MODES:
-	// 1 - simple color change with dark
-	// 2 - rainbow
-	// 3 - simple color change smooth
-	// 4 - circle
-	// 5 - wtf ?
-	// 6 - click color
-	// 7 - click line
-	// 8 - click feel
-	// 9 - random color
-	// 10 - static manual colors (driver mode)
-	// 11 - click plus
-	// 12 - equalizer clicked
-	// 13 - equalizer 2 (?) music
-	// 14 - auto diagonal feel
-	// 15 - auto lines feel
-	//16 - click circle
+func (k *Keyboard) SaveOptions() (int, error) {
+	//TODO: save options to json
 
-	if !k.Connected {
-		return 0, errors.New("device not connectd")
-	}
-
-	return k.Device.Write([]byte{
-		0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x04, //7 byte - mode (max 16), 8 - bright (max - 4)
-		0x03, 0xff, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, // 9 - speed, 13,14,15 - back color
-		0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 17 - byte type (rainbow or mono)
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	})
+	return k.writeBytes(k.Options.GetBytes())
 }
 
 // Run update state every 10ms
@@ -139,7 +97,7 @@ func (k *Keyboard) ResetState() error {
 	return nil
 }
 
-func (k *Keyboard) write() (int, error) {
+func (k *Keyboard) writeBytes(b []byte) (int, error) {
 	k.Mu.Lock()
 	defer func() {
 		k.Mu.Unlock()
@@ -149,14 +107,23 @@ func (k *Keyboard) write() (int, error) {
 		return 0, nil
 	}
 
-	write, err := k.Device.Write(k.RGBState)
+	write, err := k.Device.Write(b)
 	if err != nil {
 		k.Connected = false
 		k.Device = nil
 		log.Println(err)
 		return 0, nil
 	}
+
 	return write, err
+}
+
+func (k *Keyboard) writeKeys() (int, error) {
+	if k.Device == nil {
+		return 0, nil
+	}
+
+	return k.writeBytes(k.RGBState)
 }
 
 // UpdateWithKeys Update state keys on keyboard
@@ -167,7 +134,7 @@ func (k *Keyboard) UpdateWithKeys() (int, error) {
 		k.RGBState[key.GetBlueIndex()] = key.GetBlue()
 	}
 
-	return k.write()
+	return k.writeKeys()
 }
 
 func (k *Keyboard) setKeymap() {

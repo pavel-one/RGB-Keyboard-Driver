@@ -34,10 +34,11 @@ func (a *App) startup(ctx context.Context) {
 		return
 	}
 
-	_, err := a.Keyboard.SetDriverMode()
+	write, err := a.Keyboard.SaveOptions()
 	if err != nil {
 		return
 	}
+	log.Printf("Writing options byte %d", write)
 
 	go a.Keyboard.Run()
 
